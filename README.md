@@ -11,7 +11,3 @@ plots and a world map to provide information of region you click on to make it m
 4. HTML5
 5. Bootstrap v3
 6. Mapbox
-
-
-
-![Completed](/Screenshot (73).png)
