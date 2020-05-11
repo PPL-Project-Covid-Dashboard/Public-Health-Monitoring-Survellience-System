@@ -14,4 +14,4 @@ plots and a world map to provide information of region you click on to make it m
 
 
 
-![Completed](Public-Health-Monitoring-Survellience-System/Screenshot (73).png)
+![Completed](Screenshot (73).png)
