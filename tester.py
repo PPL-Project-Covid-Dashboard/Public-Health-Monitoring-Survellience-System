@@ -13,7 +13,7 @@ from datetime import datetime
 #####################################################################################################################################
 # Boostrap CSS and font awesome . Option 1) Run from codepen directly Option 2) Copy css file to assets folder and run locally
 #####################################################################################################################################
-external_stylesheets = ['https://codepen.io/unicorndy/pen/GRJXrvP.css','https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css', 'styles.css']
+external_stylesheets = ['https://codepen.io/unicorndy/pen/GRJXrvP.css','https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css']
 
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
