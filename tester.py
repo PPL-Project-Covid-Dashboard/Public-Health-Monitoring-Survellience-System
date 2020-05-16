@@ -13,8 +13,8 @@ from datetime import datetime
 #####################################################################################################################################
 # Boostrap CSS and font awesome . Option 1) Run from codepen directly Option 2) Copy css file to assets folder and run locally
 #####################################################################################################################################
-external_stylesheets = ['https://codepen.io/unicorndy/pen/GRJXrvP.css','https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css']
-
+external_stylesheets = ['https://codepen.io/unicorndy/pen/GRJXrvP.css',
+                        'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 app.title = 'Covid19 - Global Dashboard Example'
@@ -23,30 +23,30 @@ colors = {
     'background': '#000000',
     'text': '#56dbdb',
     'figure_text': '#ffffff',
-    'confirmed_text':'#f2b56b',
-    'deaths_text':'#f44336',
-    'recovered_text':'#7ff26b',
-    'highest_case_bg':'#393939',
-    
+    'confirmed_text': '#f2b56b',
+    'deaths_text': '#f44336',
+    'recovered_text': '#7ff26b',
+    'highest_case_bg': '#393939',
+
 }
 
-#Creating custom style for local use
+# Creating custom style for local use
 divBorderStyle = {
-    'backgroundColor' : '#393939',
+    'backgroundColor': '#393939',
     'borderRadius': '12px',
     'lineHeight': 0.9,
 }
 
-#Creating custom style for local use
+# Creating custom style for local use
 boxBorderStyle = {
-    'borderColor' : '#393939',
+    'borderColor': '#393939',
     'borderStyle': 'solid',
     'borderRadius': '10px',
-    'borderWidth':2,
+    'borderWidth': 2,
 }
 
 url_confirmed = 'https://api.covid19india.org/csv/latest/state_wise.csv'
-#print(url_confirmed)
+# print(url_confirmed)
 
 df_confirmed = pd.read_csv(url_confirmed)
 df_deaths = pd.read_csv(url_confirmed)
@@ -56,7 +56,7 @@ df_recovered = pd.read_csv(url_confirmed)
 # print(df_confirmed)
 # print(type(df_confirmed))
 
-#print(df_confirmed)
+# print(df_confirmed)
 df_confirmed_total = df_confirmed.iloc[0]
 # print(df_confirmed_total)
 df_deaths_total = df_deaths.iloc[0]
@@ -65,62 +65,101 @@ df_recovered_total = df_recovered.iloc[0]
 
 df_active_total = df_recovered.iloc[0]
 
-#for highest case
+# for highest case
 df_confirmed_sorted = df_confirmed.iloc[1:, :2]
-#df_deaths_sorted = df_deaths.iloc[1:, 0:4:3]
-df_recovered_sorted = df_recovered.sort_values(by=df_recovered.columns[2], ascending=False)[['State',df_recovered.columns[2]]]
-df_deaths_sorted = df_deaths.sort_values(by=df_deaths.columns[3], ascending=False)[['State',df_confirmed.columns[3]]]
+# df_deaths_sorted = df_deaths.iloc[1:, 0:4:3]
+df_recovered_sorted = df_recovered.sort_values(by=df_recovered.columns[2], ascending=False)[
+    ['State', df_recovered.columns[2]]]
+df_deaths_sorted = df_deaths.sort_values(by=df_deaths.columns[3], ascending=False)[['State', df_confirmed.columns[3]]]
 
-#for past 24 hrs
-df_confirmed_sorted_1 = df_confirmed.sort_values(by=df_confirmed.columns[7], ascending = False)[['State', df_confirmed.columns[7]]]
-df_recovered_sorted_1 = df_recovered.sort_values(by=df_recovered.columns[7], ascending = False)[['State', df_recovered.columns[7]]]
-df_deaths_sorted_1 = df_deaths.sort_values(by=df_deaths.columns[7], ascending = False)[['State', df_deaths.columns[7]]]
+# for past 24 hrs
+df_confirmed_sorted_1 = df_confirmed.sort_values(by=df_confirmed.columns[7], ascending=False)[
+    ['State', df_confirmed.columns[7]]]
+df_recovered_sorted_1 = df_recovered.sort_values(by=df_recovered.columns[7], ascending=False)[
+    ['State', df_recovered.columns[7]]]
+df_deaths_sorted_1 = df_deaths.sort_values(by=df_deaths.columns[7], ascending=False)[['State', df_deaths.columns[7]]]
 
-#for displaying highest count states
+# for displaying highest count states
 df_confirmed_sorted_1 = df_confirmed_sorted_1.iloc[1:, :]
 
 
+def high_cases(state, total):
+    return html.P([html.Span(state + ' | ' + f"{int(total):,d}",
+                             style={'backgroundColor': colors['highest_case_bg'], 'borderRadius': '6px',
+                                    'color': '#d7b5f7', }),
 
-def high_cases(state,total):
-    return html.P([ html.Span(state + ' | ' + f"{int(total):,d}",
-                        style={'backgroundColor': colors['highest_case_bg'], 'borderRadius': '6px', 'color':'#d7b5f7',}),
-
-            ]
-        )
+                   ]
+                  )
 
 
 noToDisplay = 8
 
 confirm_cases = []
 for i in range(noToDisplay):
-    confirm_cases.append(high_cases(df_confirmed_sorted.iloc[i,0],df_confirmed_sorted.iloc[i,1]))
+    confirm_cases.append(high_cases(df_confirmed_sorted.iloc[i, 0], df_confirmed_sorted.iloc[i, 1]))
 
+confirm_cases_24hrs = []
+for i in range(noToDisplay):
+    confirm_cases_24hrs.append(high_cases(df_confirmed_sorted_1.iloc[i,0],df_confirmed_sorted_1.iloc[i,1]))
 
 deaths_cases = []
 for i in range(noToDisplay):
-    deaths_cases.append(high_cases(df_deaths_sorted.iloc[i+1,0],df_deaths_sorted.iloc[i+1,1]))
-
+    deaths_cases.append(high_cases(df_deaths_sorted.iloc[i + 1, 0], df_deaths_sorted.iloc[i + 1, 1]))
 
 url_states = pd.read_csv('states.txt')
-#print(url_states)
+# print(url_states)
 
 # Recreate required columns for map data
 map_data = df_confirmed[["State"]]
 map_data = map_data.iloc[1:]
 map_data['Latitude'] = url_states.loc[:, url_states.columns[1]]
 map_data['Longitude'] = url_states.loc[:, url_states.columns[2]]
-#print(map_data)
+# print(map_data)
 
 
 map_data['Confirmed'] = df_confirmed.loc[1:, df_confirmed.columns[1]]
 map_data['Deaths'] = df_deaths.loc[:, df_deaths.columns[3]]
 map_data['Recovered'] = df_recovered.loc[:, df_recovered.columns[2]]
 
-#last 24 hours increase
-map_data['Deaths_24hr']=df_deaths_sorted_1.iloc[1:,1]
-map_data['Recovered_24hr']=df_recovered_sorted_1.iloc[1:,1]
-map_data['Confirmed_24hr']=df_confirmed_sorted_1.iloc[1:,1]
-map_data.sort_values(by='Confirmed', ascending=False,inplace=True)
+# last 24 hours increase
+map_data['Deaths_24hr'] = df_deaths_sorted_1.iloc[1:, 1]
+map_data['Recovered_24hr'] = df_recovered_sorted_1.iloc[1:, 1]
+map_data['Confirmed_24hr'] = df_confirmed_sorted_1.iloc[1:, 1]
+map_data.sort_values(by='Confirmed', ascending=False, inplace=True)
+
+
+# Variable For first graph
+state_wise_daily = pd.read_csv("https://api.covid19india.org/csv/latest/state_wise_daily.csv")
+
+
+state_wise_daily_confirmed = state_wise_daily[state_wise_daily.index % 3 == 0]
+state_wise_daily_confirmed = state_wise_daily_confirmed.iloc[:, :3]
+cols = state_wise_daily_confirmed.columns.tolist()
+cols = cols[:-2] + cols[-1:]
+state_wise_daily_confirmed = state_wise_daily_confirmed[cols]
+list_of_dates = state_wise_daily_confirmed['Date'].to_list()
+state_wise_daily_confirmed.columns = ['']*len(state_wise_daily_confirmed.columns)
+state_wise_daily_confirmed = state_wise_daily_confirmed.iloc[:, 1]
+
+
+state_wise_daily_recovered = state_wise_daily[state_wise_daily.index % 3 == 1]
+state_wise_daily_recovered = state_wise_daily_recovered.iloc[:, :3]
+cols = state_wise_daily_recovered.columns.tolist()
+cols = cols[:-2] + cols[-1:]
+state_wise_daily_recovered = state_wise_daily_recovered[cols]
+state_wise_daily_recovered.columns = ['']*len(state_wise_daily_recovered.columns)
+state_wise_daily_recovered = state_wise_daily_recovered.iloc[:, 1]
+
+
+state_wise_daily_deaths = state_wise_daily[state_wise_daily.index % 3 == 2]
+state_wise_daily_deaths = state_wise_daily_deaths.iloc[:, :3]
+cols = state_wise_daily_deaths.columns.tolist()
+cols = cols[:-2] + cols[-1:]
+state_wise_daily_deaths = state_wise_daily_deaths[cols]
+state_wise_daily_deaths.columns = ['']*len(state_wise_daily_deaths.columns)
+state_wise_daily_deaths = state_wise_daily_deaths.iloc[:, 1]
+
+
 
 
 #############################################################################
@@ -128,32 +167,27 @@ map_data.sort_values(by='Confirmed', ascending=False,inplace=True)
 #############################################################################
 mapbox_access_token = 'pk.eyJ1IjoiMTExODAzMTU3IiwiYSI6ImNrOWliY3kzZDAwM2wzbHBqOHhqbnBwcHcifQ.hCWC05VqD38sJxDYlHGR8Q'
 
+
 ####################################################
 # Prepare plotly figure to attached to dcc component
 # Global outbreak Plot
 ####################################################
 # Change date index to datetimeindex and share x-axis with all the plot
-def draw_global_graph(df_confirmed_total,df_deaths_total,df_recovered_total,graph_type='Total Cases'):
-    df_confirmed_total.index = pd.to_datetime(df_confirmed_total.index)
-
-    if graph_type == 'Daily Cases':
-        df_confirmed_total = (df_confirmed_total - df_confirmed_total.shift(1)).drop(df_confirmed_total.index[0])
-        df_deaths_total = (df_deaths_total - df_deaths_total.shift(1)).drop(df_deaths_total.index[0])
-        df_recovered_total = (df_recovered_total - df_recovered_total.shift(1)).drop(df_recovered_total.index[0])
+def draw_global_graph(state_wise_daily_confirmed,state_wise_daily_deaths,state_wise_daily_recovered,graph_type='Total Cases'):
 
     fig = go.Figure()
 
-    fig.add_trace(go.Scatter(x=df_confirmed_total.index, y=df_confirmed_total,
+    fig.add_trace(go.Scatter(x=list_of_dates, y=state_wise_daily_confirmed,
                             mode='lines+markers',
                             name='Confirmed',
                             line=dict(color='#3372FF', width=2),
                             fill='tozeroy',))
-    fig.add_trace(go.Scatter(x=df_confirmed_total.index, y=df_recovered_total,
+    fig.add_trace(go.Scatter(x=list_of_dates, y=state_wise_daily_recovered,
                             mode='lines+markers',
                             name='Recovered',
                             line=dict(color='#33FF51', width=2),
                             fill='tozeroy',))
-    fig.add_trace(go.Scatter(x=df_confirmed_total.index, y=df_deaths_total,
+    fig.add_trace(go.Scatter(x=list_of_dates, y=state_wise_daily_deaths,
                             mode='lines+markers',
                             name='Deaths',
                             line=dict(color='#FF3333', width=2),
@@ -199,33 +233,26 @@ def draw_global_graph(df_confirmed_total,df_deaths_total,df_recovered_total,grap
 
 app.layout = html.Div(
     html.Div([
-         # Header display
+        # Header display
         html.Div(
             [
                 html.H1(children='Covid-19 (Coronavirus) Interactive Outbreak Tracker',
                         style={
-                             'textAlign': 'center',
-                             'color': colors['text'],
-                             'backgroundColor': colors['background'],
-                             'fontFamily':'Bitter-Bold',
-                             'fontSize':'50px',
+                            'textAlign': 'center',
+                            'color': colors['text'],
+                            'backgroundColor': colors['background'],
+                            'fontFamily': 'Bitter-Bold',
+                            'fontSize': '50px',
                         },
                         className='ten columns',
                         ),
-                html.Div([
-                    html.Button(html.I(className="fa fa-info-circle"),
-                        id='info-button',
-                        style={
-                              'color': '#ffffff',
-                              'fontSize':'36px'
-                        },)
-                ],className='two columns',),
+
                 html.Div(children='Best viewed on Desktop. Refresh browser for latest update.',
                          style={
                              'textAlign': 'left',
                              'color': colors['text'],
                              'textAlign': 'left',
-                             'fontSize':'20px'
+                             'fontSize': '20px'
                          },
                          className='twelve columns'
                          ),
@@ -235,120 +262,120 @@ app.layout = html.Div(
         html.Div([
             html.Div(
                 [
-                html.H4(children='Total Cases: ',
-                       style={
-                           'textAlign': 'center',
-                           'color': colors['confirmed_text'],
-                           'backgroundColor': colors['background'],
-                           'marginBottom':'0',
+                    html.H4(children='Total Cases: ',
+                            style={
+                                'textAlign': 'center',
+                                'color': colors['confirmed_text'],
+                                'backgroundColor': colors['background'],
+                                'marginBottom': '0',
 
-                       }
-                       ),
-                html.P(f"{df_confirmed_total[1]:,d}",
-                       style={
-                    'textAlign': 'center',
-                    'color': colors['confirmed_text'],
-                    'backgroundColor': colors['background'],
-                    'fontSize': 30,
-                }
-                ),
-                html.P('New Cases: ' + f"{df_confirmed_total[7]:,d}",
-                       style={
-                    'textAlign': 'center',
-                    'color': colors['confirmed_text'],
-                    'backgroundColor': colors['background'],
-                    'fontSize': 17,
-                    'borderRadius': '10px',
-                }
-                ),
-            ],
+                            }
+                            ),
+                    html.P(f"{df_confirmed_total[1]:,d}",
+                           style={
+                               'textAlign': 'center',
+                               'color': colors['confirmed_text'],
+                               'backgroundColor': colors['background'],
+                               'fontSize': 30,
+                           }
+                           ),
+                    html.P('New Cases: ' + f"{df_confirmed_total[7]:,d}",
+                           style={
+                               'textAlign': 'center',
+                               'color': colors['confirmed_text'],
+                               'backgroundColor': colors['background'],
+                               'fontSize': 17,
+                               'borderRadius': '10px',
+                           }
+                           ),
+                ],
                 style=divBorderStyle,
                 className='three columns',
             ),
             html.Div([
                 html.H4(children='Total Deceased: ',
+                        style={
+                            'textAlign': 'center',
+                            'color': colors['deaths_text'],
+                            'backgroundColor': colors['background'],
+                            'marginBottom': '0',
+                        }
+                        ),
+                html.P(f"{df_deaths_total[3]:,d}",
+                       style={
+                           'textAlign': 'center',
+                           'color': colors['deaths_text'],
+                           'fontSize': 30,
+                           'backgroundColor': colors['background'],
+                       }
+                       ),
+                html.P('Mortality Rate: ' + str(round(df_deaths_total[3] / df_confirmed_total[1] * 100, 3)) + '%',
                        style={
                            'textAlign': 'center',
                            'color': colors['deaths_text'],
                            'backgroundColor': colors['background'],
-                           'marginBottom':'0',
+                           'fontSize': 17,
+                           'borderRadius': '10px',
                        }
                        ),
-                html.P(f"{df_deaths_total[3]:,d}",
-                       style={
-                    'textAlign': 'center',
-                    'color': colors['deaths_text'],
-                    'fontSize': 30,
-                    'backgroundColor': colors['background'],
-                }
-                ),
-                 html.P('Mortality Rate: ' + str(round(df_deaths_total[3]/df_confirmed_total[1] * 100, 3)) + '%',
-                       style={
-                    'textAlign': 'center',
-                    'color': colors['deaths_text'],
-                    'backgroundColor': colors['background'],
-                    'fontSize': 17,
-                    'borderRadius': '10px',
-                }
-                ),
             ],
                 style=divBorderStyle,
                 className='three columns'),
-             html.Div([
+            html.Div([
                 html.H4(children='Active Cases: ',
+                        style={
+                            'textAlign': 'center',
+                            'color': '#fb8dfc',
+                            'backgroundColor': colors['background'],
+                            'marginBottom': '0',
+                        }
+                        ),
+                html.P(f"{df_active_total[4]:,d}",
+                       style={
+                           'textAlign': 'center',
+                           'color': '#fb8dfc',
+                           'fontSize': 30,
+                           'backgroundColor': colors['background'],
+                       }
+                       ),
+                html.P('Growth Rate: ' + str(round(df_confirmed_total[7] / df_confirmed_total[1] * 100, 3)) + '%',
                        style={
                            'textAlign': 'center',
                            'color': '#fb8dfc',
                            'backgroundColor': colors['background'],
-                           'marginBottom':'0',
+                           'fontSize': 17,
+                           'borderRadius': '10px',
                        }
                        ),
-                html.P(f"{df_active_total[4]:,d}",
-                       style={
-                    'textAlign': 'center',
-                    'color': '#fb8dfc',
-                    'fontSize': 30,
-                    'backgroundColor': colors['background'],
-                }
-                ),
-                 html.P('Growth Rate: ' + str(round(df_confirmed_total[7]/df_confirmed_total[1] * 100, 3)) + '%',
-                       style={
-                    'textAlign': 'center',
-                    'color': '#fb8dfc',
-                    'backgroundColor': colors['background'],
-                    'fontSize': 17,
-                    'borderRadius': '10px',
-                }
-                ),
             ],
                 style=divBorderStyle,
                 className='three columns'),
             html.Div([
                 html.H4(children='Total Recovered: ',
+                        style={
+                            'textAlign': 'center',
+                            'color': colors['recovered_text'],
+                            'backgroundColor': colors['background'],
+                            'marginBottom': '0',
+                        }
+                        ),
+                html.P(f"{df_recovered_total[2]:,d}",
                        style={
                            'textAlign': 'center',
                            'color': colors['recovered_text'],
                            'backgroundColor': colors['background'],
-                           'marginBottom':'0',
+                           'fontSize': 30,
                        }
                        ),
-                html.P(f"{df_recovered_total[2]:,d}",
+                html.P('Recovery Rate: ' + str(round(df_recovered_total[2] / df_confirmed_total[1] * 100, 3)) + '%',
                        style={
-                    'textAlign': 'center',
-                    'color': colors['recovered_text'],
-                    'backgroundColor': colors['background'],
-                    'fontSize': 30,
-                }
-                ),
-                 html.P('Recovery Rate: ' + str(round(df_recovered_total[2]/df_confirmed_total[1] * 100, 3)) + '%',
-                       style={
-                    'textAlign': 'center',
-                    'color': colors['recovered_text'],
-                    'backgroundColor': colors['background'],
-                    'fontSize': 17,
-                    'borderRadius': '10px',
-                }
-                ),
+                           'textAlign': 'center',
+                           'color': colors['recovered_text'],
+                           'backgroundColor': colors['background'],
+                           'fontSize': 17,
+                           'borderRadius': '10px',
+                       }
+                       ),
             ],
                 style=divBorderStyle,
                 className='three columns'),
@@ -371,9 +398,27 @@ app.layout = html.Div(
                        ),
                 html.P(confirm_cases),
             ],
-                className="three columns",
+                className="four columns",
             ),
+            html.Div([
+                html.P([html.Span('Single day highest cases: ',
+                                  ),
+                        html.Br(),
+                        ],
+                       style={
+                           'textAlign': 'center',
+                           'color': 'rgb(200,200,200)',
+                           'fontsize': 12,
+                           'backgroundColor': '#18012e',
+                           'borderRadius': '12px',
+                           'fontSize': 17,
+                       }
+                       ),
 
+                html.P(confirm_cases_24hrs),
+            ],
+                className="four columns",
+            ),
             html.Div([
 
                 html.P([html.Span('States with highest mortality: ',
@@ -391,9 +436,53 @@ app.layout = html.Div(
                        ),
                 html.P(deaths_cases),
             ],
-                className="three columns",
+                className="four columns",
             ),
-        ],),
+        ], ),
+        # Graph of total confirmed, recovered and deaths
+        html.Div(
+            [
+                html.H4(children='Global Covid-19 cases',
+                        style={
+                            'textAlign': 'center',
+                            'color': colors['text'],
+                            'backgroundColor': colors['background'],
+
+                        },
+                        className='twelve columns'
+                        ),
+                html.Div([
+                    dcc.RadioItems(
+                        id='graph-type',
+                        options=[{'label': 'Total Cases', 'value': 'Total Cases'}],
+                        value='Total Cases',
+                        labelStyle={'display': 'inline-block'},
+                        style={
+                            'fontSize': 20,
+                        },
+
+                    )
+                ], className='six columns'
+                ),
+
+                html.Div([
+                    dcc.Graph(
+                        id='global-graph',
+
+                    )
+                ], className='six columns'
+                ),
+
+
+            ], className="row",
+            style={
+                'textAlign': 'left',
+                'color': colors['text'],
+                'backgroundColor': colors['background'],
+            },
+        ),
+
+        #Map, Table
         html.Div(
             [
                 html.Div(
@@ -401,8 +490,9 @@ app.layout = html.Div(
                         dt.DataTable(
                             data=map_data.to_dict('records'),
                             columns=[
-                                {"name": i, "id": i, "deletable": False, "selectable": True} for i in ['State', 'Confirmed',
-                                                                                                       'Deaths', 'Recovered']
+                                {"name": i, "id": i, "deletable": False, "selectable": True} for i in
+                                ['State', 'Confirmed',
+                                 'Deaths', 'Recovered']
                             ],
                             fixed_rows={'headers': True, 'data': 0},
                             style_header={
@@ -413,7 +503,7 @@ app.layout = html.Div(
                                 'backgroundColor': 'rgb(100, 100, 100)',
                                 'color': colors['text'],
                                 'maxWidth': 0,
-                                'fontSize':14,
+                                'fontSize': 14,
                             },
                             style_table={
                                 'maxHeight': '350px',
@@ -430,21 +520,21 @@ app.layout = html.Div(
                                     'backgroundColor': 'rgb(60, 60, 60)',
                                 },
                                 {
-                                    'if': {'column_id' : 'Confirmed'},
-                                    'color':colors['confirmed_text'],
+                                    'if': {'column_id': 'Confirmed'},
+                                    'color': colors['confirmed_text'],
                                     'fontWeight': 'bold'
                                 },
                                 {
-                                    'if': {'column_id' : 'Deaths'},
-                                    'color':colors['deaths_text'],
+                                    'if': {'column_id': 'Deaths'},
+                                    'color': colors['deaths_text'],
                                     'fontWeight': 'bold'
                                 },
                                 {
-                                    'if': {'column_id' : 'Recovered'},
-                                    'color':colors['recovered_text'],
+                                    'if': {'column_id': 'Recovered'},
+                                    'color': colors['recovered_text'],
                                     'fontWeight': 'bold'
                                 },
-                                ],
+                            ],
                             style_cell_conditional=[
                                 {'if': {'column_id': 'State'},
                                  'width': '26%'},
@@ -475,25 +565,25 @@ app.layout = html.Div(
             ], className="row",
         ),
         html.Div([
-             html.Div([
-                    html.Button(html.H6(children='For more news updates on Coronavirus',
-                        id='news-button',
-                        style={
-                             'color': colors['text'],
-                             'fontSize':'18px',
-                             'lineHeight':'normal',
-                             'textDecoration':'underline',
-                         }
-                         ),),
+            html.Div([
+                html.Button(html.H6(children='For more news updates on Coronavirus',
+                                    id='news-button',
+                                    style={
+                                        'color': colors['text'],
+                                        'fontSize': '18px',
+                                        'lineHeight': 'normal',
+                                        'textDecoration': 'underline',
+                                    }
+                                    ), ),
 
-                ],className='twelve columns',),
+            ], className='twelve columns', ),
 
-                # Preload Modal windows and set "display": "none" to hide it first
-                html.Div([  # modal div
-                    html.Div([  # content div
+            # Preload Modal windows and set "display": "none" to hide it first
+            html.Div([  # modal div
+                html.Div([  # content div
 
-                        dcc.Markdown('''
-                           
+                    dcc.Markdown('''
+
                             Sources:
                             * World Health Organization (WHO): https://www.who.int/
                             * The Indian Express: https://indianexpress.com/article/india/coronavirus-india-live-news-updates-covid-19-tracker-total-corona-cases-in-india-covid-19-vaccine-update-6395797/
@@ -504,33 +594,41 @@ app.layout = html.Div(
                             * 1Point3Arces: https://coronavirus.1point3acres.com/en
                             * WorldoMeters: https://www.worldometers.info/coronavirus/
                             '''),
-                        html.Hr(),
-                        html.Button('Close', id='modal-close-button',
-                        style={
-                             'color': colors['text'],
-                         },)
-                    ],
-                        style={
-                            'fontSize': 10,
-                            'lineHeight': 0.9,
-                        },
-                        className='modal-content',
-                    ),
+                    html.Hr(),
+                    html.Button('Close', id='modal-close-button',
+                                style={
+                                    'color': colors['text'],
+                                }, )
                 ],
-                    id='modal',
-                    className='modal',
-                    style={"display": "none"},
+                    style={
+                        'fontSize': 10,
+                        'lineHeight': 0.9,
+                    },
+                    className='modal-content',
                 ),
+            ],
+                id='modal',
+                className='modal',
+                style={"display": "none"},
+            ),
         ], className='row'),
     ],
         className='ten columns offset-by-one'
     ),
     style={
-         'textAlign': 'left',
-         'color': colors['text'],
-         'backgroundColor': colors['background'],
+        'textAlign': 'left',
+        'color': colors['text'],
+        'backgroundColor': colors['background'],
     },
 )
+
+#For first graph
+@app.callback(
+    Output('global-graph', 'figure'),
+    [Input('graph-type', 'value')])
+def update_graph(graph_type):
+    fig_global = draw_global_graph(state_wise_daily_confirmed,state_wise_daily_deaths,state_wise_daily_recovered,graph_type)
+    return fig_global
 
 
 # hide/show modal
@@ -540,6 +638,7 @@ def show_modal(n):
     if n > 0:
         return {"display": "block"}
     return {"display": "none"}
+
 
 # Close modal by resetting info_button click to 0
 @app.callback(Output('news-button', 'n_clicks'),
