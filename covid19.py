@@ -124,7 +124,7 @@ noToDisplay = 8
 
 confirm_cases = []
 for i in range(noToDisplay):
-    confirm_cases.append(high_cases(df_confirmed_sorted.iloc[i, 0], df_confirmed_sorted.iloc[i, 1]))
+    confirm_cases.append(high_cases(df_confirmed_sorted.iloc[i + 1, 0], df_confirmed_sorted.iloc[i + 1, 1]))
 
 # confirm_cases_24hrs = []
 # for i in range(noToDisplay):
