@@ -11,3 +11,9 @@ plots and a world map to provide information of region you click on to make it m
 4. HTML5
 5. Bootstrap v3
 6. Mapbox
+
+# How to run the project:-
+1. Clone the git repository using the command 
+git clone https://github.com/PPL-Project-Covid-Dashboard/Public-Health-Monitoring-Survellience-System.git
+2. Change directory to Public-Health-Monitoring-Survellience-System
+3. Run the project using python covid19.py
