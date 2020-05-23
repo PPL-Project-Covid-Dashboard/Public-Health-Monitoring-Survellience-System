@@ -525,70 +525,6 @@ def draw_singleState_Bar(df_daily_confirmed, df_daily_deceased, df_daily_recover
 
     return fig
 
-########################
-#Function for faqs
-########################
-def make_item(i):
-    # we use this function to make the example items to avoid code duplication
-    if i == 1:
-        return dbc.Card(
-        [
-            dbc.CardHeader(
-                html.H2(
-                    dbc.Button(
-                        f"What is novel coronavirus",
-                        color="link",
-                        id=f"group-{i}-toggle",
-                    )
-                )
-            ),
-            dbc.Collapse(
-                dbc.CardBody(f"A novel coronavirus is a new coronavirus that has not been previously identified. The virus causing coronavirus disease 2019 (COVID-19), is not the same as the coronaviruses that commonly circulate among humans and cause mild illness, like the common cold.A diagnosis with coronavirus 229E, NL63, OC43, or HKU1 is not the same as a COVID-19 diagnosis. Patients with COVID-19 will be evaluated and cared for differently than patients with common coronavirus diagnosis."),
-                id=f"collapse-{i}",
-            ),
-
-        ]
-    )
-    elif i == 2:
-        return dbc.Card(
-        [
-            dbc.CardHeader(
-                html.H2(
-                    dbc.Button(
-                        f"Why do the number of cases for previous days increase? ",
-                        color="link",
-                        id=f"group-{i}-toggle",
-                    )
-                )
-            ),
-            dbc.Collapse(
-                dbc.CardBody(f"Delays in reporting can cause the number of COVID-19 cases reported on previous days to increase. (Sometimes this effect is described as “backfill.”) State, local, and territorial health departments report the number of cases that have been confirmed and share these data with CDC. Since it takes time to conduct laboratory testing, cases from a previous day may be added to the daily counts a few days late."),
-                    id=f"collapse-{i}",
-            ),
-        ]
-        )
-    elif i == 3:
-        return dbc.Card(
-        [
-            dbc.CardHeader(
-                html.H2(
-                    dbc.Button(
-                        f"What is the source of the virus? ",
-                        color="link",
-                        id=f"group-{i}-toggle",
-                    )
-                )
-            ),
-            dbc.Collapse(
-                dbc.CardBody(f"COVID-19 is caused by a coronavirus called SARS-CoV-2. Coronaviruses are a large family of viruses that are common in people and many different species of animals, including camels, cattle, cats, and bats.  Rarely, animal coronaviruses can infect people and then spread between people. "),
-                id=f"collapse-{i}",
-            ),
-        ]
-    )
-
-
-
-
 app.layout = html.Div(
     html.Div([
         # Header display
@@ -1017,9 +953,18 @@ app.layout = html.Div(
         ] ,className="row"
         ),
 
+
+        html.Div([
+                    html.Script(src='https://public.flourish.studio/resources/embed.js'),
+                    html.Iframe(src='https://flo.uri.sh/visualisation/2487975/embed', width='1240', height='400'),
+
+                ], className="flourish-embed flourish-bar-chart-race",
+                   style={'backgroundColor': '#000000'},
+        ),
         #adding more related links
         html.Div([
             html.Div([
+            	html.Br(),
                 html.Button(html.H6(children='For more news updates on Coronavirus',
                                     id='news-button',
                                     style={
@@ -1032,6 +977,7 @@ app.layout = html.Div(
 
             ], className='twelve columns', ),
 
+            
             # Preload Modal windows and set "display": "none" to hide it first
             html.Div([  # modal div
 
@@ -1069,26 +1015,15 @@ app.layout = html.Div(
 
         ], className='row'),
         html.Div([
-                    html.Script(src='https://public.flourish.studio/resources/embed.js'),
-                    html.Iframe(src='https://flo.uri.sh/visualisation/2487975/embed', width='1240', height='400'),
-
-                ], className="flourish-embed flourish-bar-chart-race",
-        ),
-        html.Div(
-            [
-                html.H1(children='Frequently Asked Questions (FAQs)',
-                        style={
-                            'textAlign': 'left',
-                            'color': '#f7f37e',
-                            'fontFamily': 'Bitter-Bold',
-                            'fontSize': '30px',
-                        },
-                        className='twelve columns',
-                        ),
-                html.Div(
-                    [make_item(1), make_item(2), make_item(3)], className="accordion"
-                    , )
-            ], className='row'),
+        	html.Br(),
+    		html.A("Frequently Asked Questions", href='https://node-red-drboh.eu-gb.mybluemix.net/ui/', target="_blank", 
+    				style={
+                            'color': colors['text'],
+                            'fontSize': '24px',
+                            'lineHeight': 'normal',
+                    }),
+    		html.Br(),
+		])
     ],
 
         className='ten columns offset-by-one'
@@ -1142,30 +1077,6 @@ def map_selection(data,selected_rows,graph_line):
     fig2 = draw_singleState_Bar(df_daily_confirmed, df_daily_deceased, df_daily_recovered, temp_df['State'],
                                 selected_rows[0], graph_line)
     return gen_map(aux, zoom, latitude, longitude), fig1, fig2
-
-
-#for faqs
-@app.callback(
-    [Output(f"collapse-{i}", "is_open") for i in range(1, 4)],
-    [Input(f"group-{i}-toggle", "n_clicks") for i in range(1, 4)],
-    [State(f"collapse-{i}", "is_open") for i in range(1, 4)],
-)
-def toggle_accordion(n1, n2, n3, is_open1, is_open2, is_open3):
-    ctx = dash.callback_context
-
-    if not ctx.triggered:
-        return ""
-    else:
-        button_id = ctx.triggered[0]["prop_id"].split(".")[0]
-
-    if button_id == "group-1-toggle" and n1:
-        return not is_open1, False, False
-    elif button_id == "group-2-toggle" and n2:
-        return False, not is_open2, False
-    elif button_id == "group-3-toggle" and n3:
-        return False, False, not is_open3
-    return False, False, False
-
 
 
 # hide/show modal
