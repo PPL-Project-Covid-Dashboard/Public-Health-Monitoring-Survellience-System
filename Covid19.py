@@ -20,6 +20,9 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 app.title = 'Covid19 - India Dashboard Example'
 
 
+#for heroku to run correctly
+server = app.server
+
 colors = {
     'background': 'rgba(3,169,244,0.3)',
     'text': '#2d8af7',
