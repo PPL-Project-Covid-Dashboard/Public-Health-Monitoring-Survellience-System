@@ -1011,26 +1011,26 @@ rootLayout = html.Div([
                         className='twelve columns'
                         ),
             html.Script(src='https://public.flourish.studio/resources/embed.js'),
-            html.Iframe(src='https://flo.uri.sh/visualisation/2487975/embed', width='1240', height='400'),
+            html.Iframe(src='https://flo.uri.sh/visualisation/2487975/embed', width='1375', height='450'),
 
         ], className="flourish-embed flourish-bar-chart-race",
         ),
 
         html.Br(),
         #adding zone map
-        html.Div(children='For zone wise information: ',
-             style={
-                 'textAlign': 'center',
-                 'color': '#f7f37e',
-                 'fontSize': '20px',
-                 'backgroundColor': '#000000',
-
-             },
-             className='twelve columns'
-        ),
+        
 
         # check the zone of your district
         html.Div([
+            html.H4(children='For more zonewise information',
+                        style={
+                            'textAlign': 'center',
+                            'color': colors['text'],
+                            'backgroundColor': colors['background'],
+
+                        },
+                        className='twelve columns'
+                        ),
             html.Div([
                 html.Label('Enter the district name:'),
                 dcc.Input(
@@ -1055,7 +1055,7 @@ rootLayout = html.Div([
         #iframe for zone map
         html.Div([
             html.Script(src='https://public.flourish.studio/resources/embed.js'),
-            html.Iframe(src='https://flo.uri.sh/visualisation/2197081/embed', width='1000', height='800'),
+            html.Iframe(src='https://flo.uri.sh/visualisation/2197081/embed', width='1000', height='1200'),
 
         ], className="flourish-embed flourish-map",
         ),
@@ -1072,7 +1072,7 @@ rootLayout = html.Div([
             html.Br(),
         ]),
         html.Div([
-            html.Iframe(src='https://node-red-drboh.eu-gb.mybluemix.net/ui/', width='1240', height='600'),
+            html.Iframe(src='https://node-red-drboh.eu-gb.mybluemix.net/ui/', width='1375', height='600'),
 
         ], className="twelve columns",
         ),
@@ -1221,7 +1221,7 @@ def show_modal(n):
     else:
         return {"display": "none"}
 
-      
+
 # Close modal by resetting info_button click to 0
 @app.callback(Output('news-button', 'n_clicks'),
               [Input('modal-close-button', 'n_clicks')])
@@ -1266,3 +1266,4 @@ def switch_bg(dark, currentStyle):
 
 if __name__ == '__main__':
     app.run_server(debug=True)
+
