@@ -131,7 +131,7 @@ noToDisplay = 8
 
 confirm_cases = []
 for i in range(noToDisplay):
-    confirm_cases.append(high_cases(df_confirmed_sorted.iloc[i, 0], df_confirmed_sorted.iloc[i, 1]))
+    confirm_cases.append(high_cases(df_confirmed_sorted.iloc[i+1, 0], df_confirmed_sorted.iloc[i+1, 1]))
 
 # confirm_cases_24hrs = []
 # for i in range(noToDisplay):
@@ -1210,7 +1210,7 @@ def find_zone(District):
             return "The zone is : ",district_zone.iloc[index][5]
 
 
-'''
+
 # hide/show modal
 @app.callback(Output('modal', 'style'),
               [Input('news-button', 'n_clicks')])
@@ -1221,7 +1221,7 @@ def show_modal(n):
     else:
         return {"display": "none"}
 
-'''
+      
 # Close modal by resetting info_button click to 0
 @app.callback(Output('news-button', 'n_clicks'),
               [Input('modal-close-button', 'n_clicks')])
