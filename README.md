@@ -19,6 +19,9 @@ git clone https://github.com/PPL-Project-Covid-Dashboard/Public-Health-Monitorin
 3. Run the project using python covid19.py
 
 
+# Link to the deployed application:-
+https://public-monitor-app.herokuapp.com/
+
 # Screenshot of the Web Application:-
 
 Dark Mode                    |                   Light Mode
