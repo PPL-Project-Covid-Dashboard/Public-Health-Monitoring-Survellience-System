@@ -17,3 +17,12 @@ plots and a world map to provide information of region you click on to make it m
 git clone https://github.com/PPL-Project-Covid-Dashboard/Public-Health-Monitoring-Survellience-System.git
 2. Change directory to Public-Health-Monitoring-Survellience-System
 3. Run the project using python covid19.py
+
+
+# Screenshot of the Web Application:-
+
+Dark Mode                    |                   Light Mode
+:---------------------------------:        |      :------------------------------:
+<img src="images/dark.png" height="1000" width="50%">     |      <img src="images/light.png" height="1000" width="50%">
+
+
