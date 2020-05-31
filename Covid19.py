@@ -656,7 +656,7 @@ rootLayout = html.Div([
                                'fontSize': 30,
                            }
                            ),
-                    html.P('New Cases: ' + f"{df_confirmed_total[7]:,d}",
+                    html.P('New Cases: ' + f"{df_confirmed_total[8]:,d}",
                            style={
                                'textAlign': 'center',
                                'color': colors['confirmed_text'],
